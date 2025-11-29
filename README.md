@@ -20,7 +20,7 @@ Follow these steps to use the **IDM Activation Script (IAS)** to manage an expir
 
 1.  In the PowerShell window, paste and run the following command:
     ```powershell
-    iex (irm is.gd/IDMFIXBYPUNISHER)
+    iex (irm is.gd/IDMFIXPUNISHER)
     ```
 2.  This downloads and executes the `IAS.cmd` script from the GitHub repository.
 3.  A command prompt window will open displaying the IAS menu:
