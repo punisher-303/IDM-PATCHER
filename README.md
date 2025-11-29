@@ -26,5 +26,3 @@ Follow these steps to use the **IDM Activation Script (IAS)** to manage an expir
 <<<<<<< HEAD
 3.  A command prompt window will open displaying the IAS menu:
 =======
-3.  A command prompt window will open displaying the IAS menu:
->>>>>>> 7bda0e65619b7d54cca0b4c096f85dcfc326eb02
