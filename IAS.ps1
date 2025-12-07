@@ -15,7 +15,7 @@ try {
     $response = Invoke-WebRequest -Uri $DownloadURL -UseBasicParsing
 }
 catch {
-    $response = Invoke-WebRequest -Uri $DownloadURL -UseBasicParsing
+    $response = Invoke-WebRequest -Uri $DownloadURL2 -UseBasicParsing
 }
 
 $ScriptArgs = "$args "
@@ -27,5 +27,3 @@ Start-Process $FilePath $ScriptArgs -Wait
 
 $FilePaths = @("$env:TEMP\IAS*.cmd", "$env:SystemRoot\Temp\IAS*.cmd")
 foreach ($FilePath in $FilePaths) { Get-Item $FilePath | Remove-Item }
-
-# Add this blank line (required for some PowerShell versions)
