@@ -15,7 +15,7 @@ try {
     $response = Invoke-WebRequest -Uri $DownloadURL -UseBasicParsing
 }
 catch {
-    $response = Invoke-WebRequest -Uri $DownloadURL2 -UseBasicParsing
+    $response = Invoke-WebRequest -Uri $DownloadURL -UseBasicParsing
 }
 
 $ScriptArgs = "$args "
