@@ -1,6 +1,7 @@
 # Check the instructions here on how to use it https://github.com/punisher-303/IDM-ACTIVATION-SCRIPT/wiki
 
 $ErrorActionPreference = "Stop"
+
 # Enable TLSv1.2 for compatibility with older clients
 [Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor [Net.SecurityProtocolType]::Tls12
 
@@ -26,3 +27,5 @@ Start-Process $FilePath $ScriptArgs -Wait
 
 $FilePaths = @("$env:TEMP\IAS*.cmd", "$env:SystemRoot\Temp\IAS*.cmd")
 foreach ($FilePath in $FilePaths) { Get-Item $FilePath | Remove-Item }
+
+# Add this blank line (required for some PowerShell versions)
