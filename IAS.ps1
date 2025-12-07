@@ -1,7 +1,6 @@
 # Check the instructions here on how to use it https://github.com/punisher-303/IDM-ACTIVATION-SCRIPT/wiki
 
 $ErrorActionPreference = "Stop"
-
 # Enable TLSv1.2 for compatibility with older clients
 [Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor [Net.SecurityProtocolType]::Tls12
 
@@ -15,7 +14,8 @@ try {
     $response = Invoke-WebRequest -Uri $DownloadURL -UseBasicParsing
 }
 catch {
-    $response = Invoke-WebRequest -Uri $DownloadURL2 -UseBasicParsing
+    Write-Host "Download failed!" -ForegroundColor Red
+    exit 1
 }
 
 $ScriptArgs = "$args "
