@@ -1,28 +1,56 @@
-# Check the instructions here on how to use it https://github.com/punisher-303/IDM-ACTIVATION-SCRIPT/wiki
+# IDM Activation Script - Fixed Version
+# This fixes the line ending issue from the GitHub version
+
+# Run as Administrator if not already
+if (-NOT ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")) {
+    Start-Process PowerShell -Verb RunAs "-NoProfile -ExecutionPolicy Bypass -Command `"cd '$pwd'; & '$PSCommandPath'`""
+    exit
+}
 
 $ErrorActionPreference = "Stop"
-# Enable TLSv1.2 for compatibility with older clients
 [Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor [Net.SecurityProtocolType]::Tls12
 
-$DownloadURL = 'https://github.com/punisher-303/IDM-PATCHER/raw/refs/heads/main/IAS.cmd'
+Write-Host "Downloading IDM Activation Script..." -ForegroundColor Yellow
 
+$DownloadURL = "https://github.com/punisher-303/IDM-PATCHER/raw/refs/heads/main/IAS.cmd"
 $rand = Get-Random -Maximum 99999999
-$isAdmin = [bool]([Security.Principal.WindowsIdentity]::GetCurrent().Groups -match 'S-1-5-32-544')
-$FilePath = if ($isAdmin) { "$env:SystemRoot\Temp\IAS_$rand.cmd" } else { "$env:TEMP\IAS_$rand.cmd" }
+$FilePath = "$env:TEMP\IAS_$rand.cmd"
 
 try {
+    # Download the CMD script
     $response = Invoke-WebRequest -Uri $DownloadURL -UseBasicParsing
+    Write-Host "Download successful!" -ForegroundColor Green
 }
 catch {
-    $response = Invoke-WebRequest -Uri $DownloadURL2 -UseBasicParsing
+    Write-Host "Error downloading script: $_" -ForegroundColor Red
+    Write-Host "Trying alternative download method..." -ForegroundColor Yellow
+    
+    # Alternative download method
+    $webClient = New-Object System.Net.WebClient
+    $webClient.Headers.Add("User-Agent", "Mozilla/5.0")
+    $response = $webClient.DownloadString($DownloadURL)
 }
 
-$ScriptArgs = "$args "
+# Prepare the script content with proper Windows line endings
 $prefix = "@REM $rand `r`n"
 $content = $prefix + $response
-Set-Content -Path $FilePath -Value $content
+$content = $content -replace "`r`n?|`n", "`r`n"  # Force Windows line endings
 
-Start-Process $FilePath $ScriptArgs -Wait
+# Save the file with proper encoding
+Set-Content -Path $FilePath -Value $content -Encoding UTF8 -Force
 
-$FilePaths = @("$env:TEMP\IAS*.cmd", "$env:SystemRoot\Temp\IAS*.cmd")
-foreach ($FilePath in $FilePaths) { Get-Item $FilePath | Remove-Item }
+Write-Host "Executing activation script..." -ForegroundColor Yellow
+Start-Process -FilePath "cmd.exe" -ArgumentList "/c `"$FilePath`"" -Wait -NoNewWindow
+
+# Cleanup
+if (Test-Path $FilePath) {
+    Remove-Item $FilePath -Force
+}
+
+Write-Host "Cleaning up temporary files..." -ForegroundColor Yellow
+Get-Item "$env:TEMP\IAS*.cmd" -ErrorAction SilentlyContinue | Remove-Item -Force -ErrorAction SilentlyContinue
+Get-Item "$env:SystemRoot\Temp\IAS*.cmd" -ErrorAction SilentlyContinue | Remove-Item -Force -ErrorAction SilentlyContinue
+
+Write-Host "Process completed!" -ForegroundColor Green
+Write-Host "Please restart IDM to check if activation was successful." -ForegroundColor Cyan
+pause
